@@ -22,6 +22,7 @@
 
 #include <QGuiApplication>
 #include <QQuickView>
+#include <QTimer>
 
 #include <QVariantAnimation>
 #include "authenticator.h"
@@ -44,6 +45,7 @@ private slots:
     void onSucceeded();
     void getFocus();
     void markViewsAsVisible(QQuickView *view);
+    void updateLockTimer();
 
 protected:
     bool eventFilter(QObject *obj, QEvent *event) override;
@@ -56,8 +58,11 @@ private:
 private:
     Authenticator *m_authenticator;
     QList<QQuickView *> m_views;
+    QTimer *m_LockTimer;
 
     bool m_testing = false;
+    int m_Timeout = 5; // Default 5 minutes to close all screen.
+    int m_sec = 0;
 };
 
 #endif // APPLICATION_H

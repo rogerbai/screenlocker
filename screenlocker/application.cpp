@@ -24,6 +24,7 @@
 #include <QScreen>
 #include <QX11Info>
 #include <QEvent>
+#include <QProcess>
 
 // Qt Quick
 #include <QQuickItem>
@@ -77,6 +78,9 @@ Application::Application(int &argc, char **argv)
     if (QX11Info::isPlatformX11()) {
         installNativeEventFilter(new FocusOutEventFilter);
     }
+    m_LockTimer = new QTimer;
+
+    connect(m_LockTimer, &QTimer::timeout, this, &Application::updateLockTimer);
 }
 
 Application::~Application()
@@ -89,6 +93,7 @@ Application::~Application()
         }
     }
     qDeleteAll(m_views);
+    m_LockTimer->stop();
 }
 
 void Application::initialViewSetup()
@@ -100,6 +105,7 @@ void Application::initialViewSetup()
     }
 
     desktopResized();
+    m_LockTimer->start(1000); // tick every 1000ms
 }
 
 void Application::desktopResized()
@@ -346,4 +352,25 @@ void Application::screenGeometryChanged(QScreen *screen, const QRect &geo)
 
     QQuickView *view = m_views[screenIndex];
     view->setGeometry(geo);
+}
+
+void Application::updateLockTimer()
+{
+    if(m_sec != 0)
+    {
+        m_sec -= 1;
+    }
+    else if(m_Timeout != 0)
+    {
+        m_sec = 59;
+        m_Timeout -= 1;
+    }
+    else
+    {
+        m_LockTimer->stop();
+        // TODO Call close screen        
+        QStringList qParams;
+        qParams << "dpms" << "force" << "off";
+        QProcess::startDetached("xset", qParams);
+    }
 }
