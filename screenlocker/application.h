@@ -27,6 +27,8 @@
 #include <QVariantAnimation>
 #include "authenticator.h"
 
+const int DEFAULT_TIMEOUT = 1;
+
 class Application : public QGuiApplication
 {
     Q_OBJECT
@@ -54,6 +56,7 @@ private:
     QWindow *getActiveScreen();
     void shareEvent(QEvent *e, QQuickView *from);
     void screenGeometryChanged(QScreen *screen, const QRect &geo);
+    void resetTimer();
 
 private:
     Authenticator *m_authenticator;
@@ -61,7 +64,7 @@ private:
     QTimer *m_LockTimer;
 
     bool m_testing = false;
-    int m_Timeout = 5; // Default 5 minutes to close all screen.
+    int m_Timeout = DEFAULT_TIMEOUT; // Default 5 minutes to close all screen.
     int m_sec = 0;
 };
 

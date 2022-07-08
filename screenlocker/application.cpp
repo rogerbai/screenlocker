@@ -273,11 +273,21 @@ bool Application::eventFilter(QObject *obj, QEvent *event)
         if (getActiveScreen()) {
             getActiveScreen()->requestActivate();
         }
+        resetTimer();
+        return false;
+    }
+
+    if (event->type() == QEvent::MouseMove && QX11Info::isPlatformX11()) {
+        if (getActiveScreen()) {
+            getActiveScreen()->requestActivate();
+        }
+        resetTimer();
         return false;
     }
 
     if (event->type() == QEvent::KeyPress) { // react if saver is visible
         shareEvent(event, qobject_cast<QQuickView *>(obj));
+        resetTimer();
         return false; // we don't care
     } else if (event->type() == QEvent::KeyRelease) { // conditionally reshow the saver
         QKeyEvent *ke = static_cast<QKeyEvent *>(event);
@@ -373,4 +383,10 @@ void Application::updateLockTimer()
         qParams << "dpms" << "force" << "off";
         QProcess::startDetached("xset", qParams);
     }
+}
+
+void Application::resetTimer()
+{
+    m_sec = 0;
+    m_Timeout = DEFAULT_TIMEOUT;
 }
