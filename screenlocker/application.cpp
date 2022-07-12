@@ -378,10 +378,7 @@ void Application::updateLockTimer()
     else
     {
         m_LockTimer->stop();
-        // TODO Call close screen        
-        QStringList qParams;
-        qParams << "dpms" << "force" << "off";
-        QProcess::startDetached("xset", qParams);
+        QProcess::startDetached("xset", QString("dpms force off").split(" "));
     }
 }
 
@@ -389,4 +386,6 @@ void Application::resetTimer()
 {
     m_sec = 0;
     m_Timeout = DEFAULT_TIMEOUT;
+    if(!m_LockTimer->isActive())
+        m_LockTimer->start(1000);  // restart the timer if needed.
 }
