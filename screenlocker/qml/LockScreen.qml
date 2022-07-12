@@ -118,7 +118,7 @@ Item {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
             Layout.alignment: Qt.AlignHCenter
-            font.pointSize: 35
+            font.pointSize: 55
             color: "white"
 
             function updateInfo() {
